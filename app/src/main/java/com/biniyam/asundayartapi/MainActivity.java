@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         ArticApiService apiService = retrofit.create(ArticApiService.class);
 
         // Make the API call to fetch a list of artwork titles and image IDs
-        Call<ArtworkListResponse> call = apiService.getArtworkList("title,image_id", 10); // Fetch 10 artworks with titles and image IDs
+        Call<ArtworkListResponse> call = apiService.getArtworkList("title,image_id", 1); // Fetch 10 artworks with titles and image IDs
         call.enqueue(new Callback<ArtworkListResponse>() {
             @Override
             public void onResponse(Call<ArtworkListResponse> call, Response<ArtworkListResponse> response) {
