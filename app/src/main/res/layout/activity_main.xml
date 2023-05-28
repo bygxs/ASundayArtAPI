@@ -4,27 +4,10 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <ListView
-        android:id="@+id/listView"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:src="@drawable/ic_launcher_foreground" />
-
-    <TextView
-        android:id="@+id/titleTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:layout_gravity="center_vertical"
-        android:layout_marginStart="16dp" />
-
-
-
 
 </LinearLayout>
 
