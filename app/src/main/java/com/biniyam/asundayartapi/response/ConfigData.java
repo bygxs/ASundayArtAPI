@@ -1,4 +1,4 @@
-package com.biniyam.asundayartapi;
+package com.biniyam.asundayartapi.response;
 
 public class ConfigData {
     private String iiif_url;

@@ -4,13 +4,16 @@ import static android.content.ContentValues.TAG;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.ImageView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
-import com.bumptech.glide.request.RequestOptions;
+import com.biniyam.asundayartapi.response.ArtworkData;
+import com.biniyam.asundayartapi.response.ArtworkListResponse;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -18,18 +21,19 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+
 public class MainActivity extends AppCompatActivity {
 
     private static final String BASE_URL = "https://api.artic.edu/";
-
-    private ImageView imageView;
+    private ListView listView;
+    private ArrayAdapter<String> artworkAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        imageView = findViewById(R.id.imageView);
+        listView = findViewById(R.id.listView);
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
@@ -38,32 +42,29 @@ public class MainActivity extends AppCompatActivity {
 
         ArticApiService apiService = retrofit.create(ArticApiService.class);
 
-        // Make the API call
-        Call<ArtworkResponse> call = apiService.getArtwork(27992, "id,title,image_id");
-        call.enqueue(new Callback<ArtworkResponse>() {
+        // Make the API call to fetch a list of artwork titles and image IDs
+        Call<ArtworkListResponse> call = apiService.getArtworkList("title,image_id", 10); // Fetch 10 artworks with titles and image IDs
+        call.enqueue(new Callback<ArtworkListResponse>() {
             @Override
-            public void onResponse(Call<ArtworkResponse> call, Response<ArtworkResponse> response) {
+            public void onResponse(Call<ArtworkListResponse> call, Response<ArtworkListResponse> response) {
                 if (response.isSuccessful()) {
-                    ArtworkResponse artworkResponse = response.body();
-                    if (artworkResponse != null) {
-                        ArtworkData artworkData = artworkResponse.getData();
-                        ConfigData configData = artworkResponse.getConfig();
+                    ArtworkListResponse artworkListResponse = response.body();
+                    if (artworkListResponse != null) {
+                        List<ArtworkData> artworkList = artworkListResponse.getData();
 
-                        String iiifUrl = configData.getIiifUrl();
-                        String imageId = artworkData.getImageId();
+                        // Extract the titles, image IDs, and construct IIIF URLs
+                        List<String> artworks = new ArrayList<>();
+                        for (ArtworkData artwork : artworkList) {
+                            String title = artwork.getTitle();
+                            String imageId = artwork.getImageId();
+                            String iiifUrl = "https://www.artic.edu/iiif/2/" + imageId + "/full/843,/0/default.jpg";
+                            artworks.add(title + "\n" + iiifUrl);
+                        }
 
-                        String imageUrl = iiifUrl + "/" + imageId + "/full/843,/0/default.jpg";
-
-                        // Load the image into the ImageView using Glide
-                        Glide.with(MainActivity.this)
-                                .load(imageUrl)
-                                .apply(new RequestOptions().placeholder(R.drawable.ic_launcher_background))
-                                .transition(DrawableTransitionOptions.withCrossFade())
-                                .into(imageView);
-
-                        // Display the extracted values
-                        Log.d(TAG, "Image URL: " + imageUrl);
-                       // Log.d(TAG, "Title: " + title);
+                        // Create the adapter and set it to the ListView
+                        artworkAdapter = new ArrayAdapter<>(MainActivity.this,
+                                android.R.layout.simple_list_item_1, artworks);
+                        listView.setAdapter(artworkAdapter);
                     }
                 } else {
                     // Handle API error
@@ -72,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<ArtworkResponse> call, Throwable t) {
+            public void onFailure(Call<ArtworkListResponse> call, Throwable t) {
                 // Handle network or other errors
                 Log.e(TAG, "API call failed: " + t.getMessage());
             }
