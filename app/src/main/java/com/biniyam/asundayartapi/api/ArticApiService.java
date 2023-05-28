@@ -1,4 +1,4 @@
-package com.biniyam.asundayartapi;
+package com.biniyam.asundayartapi.api;
 
 import com.biniyam.asundayartapi.response.ArtworkListResponse;
 
