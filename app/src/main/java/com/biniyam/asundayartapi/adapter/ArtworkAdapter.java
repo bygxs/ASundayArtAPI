@@ -57,7 +57,7 @@ public class ArtworkAdapter extends RecyclerView.Adapter<ArtworkAdapter.ViewHold
             String iiifUrl = "https://www.artic.edu/iiif/2/" + imageId + "/full/843,/0/default.jpg";
             textView.setText(title);
             // Load the image using your preferred image loading library or method
-            // For example, you can use Glide or Picasso to load the image from the URL
+            //  Glide or Picasso to load the image from the URL
             Glide.with(itemView.getContext())
                     .load(iiifUrl)
                     .into(imageView);

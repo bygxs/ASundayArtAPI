@@ -1,4 +1,5 @@
 package com.biniyam.asundayartapi;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,12 +26,9 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
-
     private static final String BASE_URL = "https://api.artic.edu/";
-
     private RecyclerView recyclerView;
     private ArtworkAdapter artworkAdapter;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         ArticApiService apiService = RetrofitClient.getClient(BASE_URL).create(ArticApiService.class);
 
         // Make the API call to fetch a list of artwork titles and image IDs
-        Call<ArtworkListResponse> call = apiService.getArtworkList("title,image_id", 5); // Fetch 5 artworks with titles and image IDs
+        Call<ArtworkListResponse> call = apiService.getArtworkList("title,image_id", 10); // Fetch 5 artworks with titles and image IDs
         call.enqueue(new Callback<ArtworkListResponse>() {
             @Override
             public void onResponse(Call<ArtworkListResponse> call, Response<ArtworkListResponse> response) {
@@ -71,11 +69,9 @@ public class MainActivity extends AppCompatActivity {
 
     private class ArtworkAdapter extends RecyclerView.Adapter<ArtworkAdapter.ArtworkViewHolder> {
         private List<ArtworkData> artworkList;
-
         public ArtworkAdapter(List<ArtworkData> artworkList) {
             this.artworkList = artworkList;
         }
-
         @NonNull
         @Override
         public ArtworkViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -110,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
             public ArtworkViewHolder(@NonNull View itemView) {
                 super(itemView);
                 imageView = itemView.findViewById(R.id.imageView);
-                titleTextView = itemView.findViewById(R.id.textView );
+                titleTextView = itemView.findViewById(R.id.textView);
             }
         }
     }
