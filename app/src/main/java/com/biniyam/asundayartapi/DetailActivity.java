@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 
 public class DetailActivity extends AppCompatActivity {
 
@@ -22,10 +23,15 @@ public class DetailActivity extends AppCompatActivity {
 
         // Get the artwork details from the intent
         String title = getIntent().getStringExtra("title");
-        int imageResId = getIntent().getIntExtra("imageResId", R.drawable.ic_launcher_background);
+        String imageId = getIntent().getStringExtra("imageId");
+        String iiifUrl = "https://www.artic.edu/iiif/2/" + imageId + "/full/843,/0/default.jpg";
 
         // Set the artwork details in the views
         titleTextView.setText(title);
-        imageView.setImageResource(imageResId);
+        // Load the image using your preferred image loading library or method
+        // For example, Glide or Picasso to load the image from the URL
+        Glide.with(this)
+                .load(iiifUrl)
+                .into(imageView);
     }
 }

@@ -28,6 +28,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
+
     private static final String BASE_URL = "https://api.artic.edu/";
     private RecyclerView recyclerView;
     private ArtworkAdapter artworkAdapter;

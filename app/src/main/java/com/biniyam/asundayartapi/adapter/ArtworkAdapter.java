@@ -50,9 +50,7 @@ public class ArtworkAdapter extends RecyclerView.Adapter<ArtworkAdapter.ViewHold
                 // Create an intent to start the DetailActivity
                 Intent intent = new Intent(context, DetailActivity.class);
                 intent.putExtra("title", clickedArtwork.getTitle());
-                // Pass any other details you want to display in the detail activity
-                // For example, image URL or ID
-                intent.putExtra("imageUrl", "https://www.artic.edu/iiif/2/" + clickedArtwork.getImageId() + "/full/843,/0/default.jpg");
+                intent.putExtra("imageId", clickedArtwork.getImageId());
 
                 // Start the detail activity
                 context.startActivity(intent);
@@ -81,7 +79,7 @@ public class ArtworkAdapter extends RecyclerView.Adapter<ArtworkAdapter.ViewHold
             String iiifUrl = "https://www.artic.edu/iiif/2/" + imageId + "/full/843,/0/default.jpg";
             textView.setText(title);
             // Load the image using your preferred image loading library or method
-            //  Glide or Picasso to load the image from the URL
+            // For example, Glide or Picasso to load the image from the URL
             Glide.with(itemView.getContext())
                     .load(iiifUrl)
                     .into(imageView);
