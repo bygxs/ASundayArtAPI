@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.biniyam.asundayartapi.adapter.ArtworkAdapter;
 import com.bumptech.glide.Glide;
 import com.biniyam.asundayartapi.api.ArticApiService;
 import com.biniyam.asundayartapi.api.RetrofitClient;
@@ -29,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String BASE_URL = "https://api.artic.edu/";
     private RecyclerView recyclerView;
     private ArtworkAdapter artworkAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,47 +69,4 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private class ArtworkAdapter extends RecyclerView.Adapter<ArtworkAdapter.ArtworkViewHolder> {
-        private List<ArtworkData> artworkList;
-        public ArtworkAdapter(List<ArtworkData> artworkList) {
-            this.artworkList = artworkList;
-        }
-        @NonNull
-        @Override
-        public ArtworkViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_artwork, parent, false);
-            return new ArtworkViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull ArtworkViewHolder holder, int position) {
-            ArtworkData artwork = artworkList.get(position);
-
-            holder.titleTextView.setText(artwork.getTitle());
-            Glide.with(MainActivity.this)
-                    .load(getImageUrl(artwork.getImageId()))
-                    .placeholder(R.drawable.ic_launcher_background)
-                    .into(holder.imageView);
-        }
-
-        @Override
-        public int getItemCount() {
-            return artworkList.size();
-        }
-
-        private String getImageUrl(String imageId) {
-            return "https://www.artic.edu/iiif/2/" + imageId + "/full/843,/0/default.jpg";
-        }
-
-        class ArtworkViewHolder extends RecyclerView.ViewHolder {
-            ImageView imageView;
-            TextView titleTextView;
-
-            public ArtworkViewHolder(@NonNull View itemView) {
-                super(itemView);
-                imageView = itemView.findViewById(R.id.imageView);
-                titleTextView = itemView.findViewById(R.id.textView);
-            }
-        }
-    }
 }
