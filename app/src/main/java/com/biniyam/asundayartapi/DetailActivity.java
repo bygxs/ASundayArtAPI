@@ -3,6 +3,7 @@ package com.biniyam.asundayartapi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,6 +18,9 @@ public class DetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+
+
+
 
         imageView = findViewById(R.id.imageView);
         titleTextView = findViewById(R.id.titleTextView);
@@ -34,4 +38,6 @@ public class DetailActivity extends AppCompatActivity {
                 .load(iiifUrl)
                 .into(imageView);
     }
+
+
 }
