@@ -1,5 +1,7 @@
 package com.biniyam.asundayartapi.adapter;
 
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.biniyam.asundayartapi.DetailActivity;
 import com.biniyam.asundayartapi.R;
 import com.biniyam.asundayartapi.response.ArtworkData;
 import com.bumptech.glide.Glide;
@@ -18,9 +21,11 @@ import java.util.List;
 public class ArtworkAdapter extends RecyclerView.Adapter<ArtworkAdapter.ViewHolder> {
 
     private List<ArtworkData> artworkList;
+    private Context context;
 
-    public ArtworkAdapter(List<ArtworkData> artworkList) {
+    public ArtworkAdapter(List<ArtworkData> artworkList, Context context) {
         this.artworkList = artworkList;
+        this.context = context;
     }
 
     @NonNull
@@ -34,6 +39,25 @@ public class ArtworkAdapter extends RecyclerView.Adapter<ArtworkAdapter.ViewHold
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         ArtworkData artwork = artworkList.get(position);
         holder.bind(artwork);
+
+        // Set click listener on the itemView
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Get the clicked artwork
+                ArtworkData clickedArtwork = artworkList.get(holder.getAdapterPosition());
+
+                // Create an intent to start the DetailActivity
+                Intent intent = new Intent(context, DetailActivity.class);
+                intent.putExtra("title", clickedArtwork.getTitle());
+                // Pass any other details you want to display in the detail activity
+                // For example, image URL or ID
+                intent.putExtra("imageUrl", "https://www.artic.edu/iiif/2/" + clickedArtwork.getImageId() + "/full/843,/0/default.jpg");
+
+                // Start the detail activity
+                context.startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -64,4 +88,3 @@ public class ArtworkAdapter extends RecyclerView.Adapter<ArtworkAdapter.ViewHold
         }
     }
 }
-

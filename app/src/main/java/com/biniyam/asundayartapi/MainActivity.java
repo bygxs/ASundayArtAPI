@@ -1,5 +1,6 @@
 package com.biniyam.asundayartapi;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -42,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         ArticApiService apiService = RetrofitClient.getClient(BASE_URL).create(ArticApiService.class);
 
         // Make the API call to fetch a list of artwork titles and image IDs
-        Call<ArtworkListResponse> call = apiService.getArtworkList("title,image_id", 10); // Fetch 5 artworks with titles and image IDs
+        Call<ArtworkListResponse> call = apiService.getArtworkList("title,image_id", 10); // Fetch 10 artworks with titles and image IDs
         call.enqueue(new Callback<ArtworkListResponse>() {
             @Override
             public void onResponse(Call<ArtworkListResponse> call, Response<ArtworkListResponse> response) {
@@ -52,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
                         List<ArtworkData> artworkList = artworkListResponse.getData();
 
                         // Create the adapter and set it to the RecyclerView
-                        artworkAdapter = new ArtworkAdapter(artworkList);
+                        artworkAdapter = new ArtworkAdapter(artworkList, MainActivity.this);
                         recyclerView.setAdapter(artworkAdapter);
                     }
                 } else {
@@ -68,5 +69,4 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
 }
