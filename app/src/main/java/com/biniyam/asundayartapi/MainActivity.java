@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void fetchArtworkList(int limit) {
-        Call<ArtworkListResponse> call = apiService.getArtworkList(limit, null);
+        Call<ArtworkListResponse> call = apiService.getArtworkList(limit, 1,null,null);
         call.enqueue(new Callback<ArtworkListResponse>() {
             @Override
             public void onResponse(Call<ArtworkListResponse> call, Response<ArtworkListResponse> response) {
@@ -103,7 +103,36 @@ public class MainActivity extends AppCompatActivity {
 
     private void performSearch(String query) {
         currentQuery = query;
-        fetchArtworkList(99);
+        Call<ArtworkListResponse> call = apiService.searchArtworks(query, null,null, 99, 1,"");
+        call.enqueue(new Callback<ArtworkListResponse>() {
+            @Override
+            public void onResponse(Call<ArtworkListResponse> call, Response<ArtworkListResponse> response) {
+                if (response.isSuccessful()) {
+                    List<ArtworkData> searchResults = response.body().getData();
+                    artworkList.clear();
+                    artworkList.addAll(searchResults);
+                    artworkAdapter.notifyDataSetChanged();
+                } else {
+                    // Handle API call error
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ArtworkListResponse> call, Throwable t) {
+                // Handle API call failure
+            }
+        });
     }
 
 }
+
+ /*
+    // tiny search form the  limited response body
+    private void performSearch(String query) {
+        currentQuery = query;
+        fetchArtworkList(99);
+    }
+
+  */
+
+
