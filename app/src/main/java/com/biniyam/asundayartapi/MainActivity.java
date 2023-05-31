@@ -21,6 +21,8 @@ import com.biniyam.asundayartapi.api.RetrofitClient;
 import com.biniyam.asundayartapi.response.ArtworkData;
 import com.biniyam.asundayartapi.response.ArtworkListResponse;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import retrofit2.Call;
@@ -43,8 +45,11 @@ public class MainActivity extends AppCompatActivity {
 
         ArticApiService apiService = RetrofitClient.getClient(BASE_URL).create(ArticApiService.class);
 
-        // Make the API call to fetch a list of artwork titles and image IDs
-        Call<ArtworkListResponse> call = apiService.getArtworkList("title,image_id", 10); // Fetch 10 artworks with titles and image IDs
+        String fields = "title,image_id"; // Specify the fields you want to retrieve
+        int limit = 100; // Set the limit to fetch maximum 100 artworks
+
+        Call<ArtworkListResponse> call = apiService.getArtworkList(limit, fields);
+
         call.enqueue(new Callback<ArtworkListResponse>() {
             @Override
             public void onResponse(Call<ArtworkListResponse> call, Response<ArtworkListResponse> response) {
@@ -53,8 +58,11 @@ public class MainActivity extends AppCompatActivity {
                     if (artworkListResponse != null) {
                         List<ArtworkData> artworkList = artworkListResponse.getData();
 
+                        // Randomize the artwork list
+                        List<ArtworkData> randomArtworks = getRandomArtworks(artworkList, limit);
+
                         // Create the adapter and set it to the RecyclerView
-                        artworkAdapter = new ArtworkAdapter(artworkList, MainActivity.this);
+                        artworkAdapter = new ArtworkAdapter(randomArtworks, MainActivity.this);
                         recyclerView.setAdapter(artworkAdapter);
                     }
                 } else {
@@ -69,5 +77,14 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("API Error", "API call failed: " + t.getMessage());
             }
         });
+    }
+
+    private List<ArtworkData> getRandomArtworks(List<ArtworkData> artworkList, int limit) {
+        List<ArtworkData> randomArtworks = new ArrayList<>(artworkList);
+        Collections.shuffle(randomArtworks);
+        if (randomArtworks.size() > limit) {
+            randomArtworks = randomArtworks.subList(0, limit);
+        }
+        return randomArtworks;
     }
 }
