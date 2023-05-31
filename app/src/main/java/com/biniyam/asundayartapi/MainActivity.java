@@ -2,6 +2,8 @@ package com.biniyam.asundayartapi;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -28,8 +30,9 @@ public class MainActivity extends AppCompatActivity {
     private ArtworkAdapter artworkAdapter;
     private List<ArtworkData> artworkList;
 
-    //private EditText searchEditText;
-    //private ImageView searchButton;
+
+    private EditText searchEditText;
+    private ImageView searchButton;
 
     private ArticApiService apiService;
     private String currentQuery = ""; // Stores the current search query
@@ -39,8 +42,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //searchEditText = findViewById(R.id.searchEditText);
-        //searchButton = findViewById(R.id.searchButton);
+        searchEditText = findViewById(R.id.searchEditText);
+        searchButton = findViewById(R.id.searchButton);
         recyclerView = findViewById(R.id.recyclerView);
 
         artworkList = new ArrayList<>();
@@ -54,16 +57,16 @@ public class MainActivity extends AppCompatActivity {
         // Fetch and display random artworks on app start
         fetchArtworkList(99);
 
-        /*
+
         // Set click listener on the search button
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String query = searchEditText.getText().toString().trim();
-                //performSearch(query);
+                performSearch(query);
             }
         });
-        */
+
     }
 
     private void fetchArtworkList(int limit) {
@@ -96,6 +99,11 @@ public class MainActivity extends AppCompatActivity {
             randomArtworks = randomArtworks.subList(0, limit);
         }
         return randomArtworks;
+    }
+
+    private void performSearch(String query) {
+        currentQuery = query;
+        fetchArtworkList(99);
     }
 
 }
