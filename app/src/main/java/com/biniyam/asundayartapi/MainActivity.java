@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void fetchArtworkList(int limit) {
-        Call<ArtworkListResponse> call = apiService.getArtworkList(limit, 1,null,null);
+        Call<ArtworkListResponse> call = apiService.getArtworkList(limit);
         call.enqueue(new Callback<ArtworkListResponse>() {
             @Override
             public void onResponse(Call<ArtworkListResponse> call, Response<ArtworkListResponse> response) {
@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void performSearch(String query) {
         currentQuery = query;
-        Call<ArtworkListResponse> call = apiService.searchArtworks(query, null,null, 99, 1,"");
+        Call<ArtworkListResponse> call = apiService.searchArtworks(query, null);
         call.enqueue(new Callback<ArtworkListResponse>() {
             @Override
             public void onResponse(Call<ArtworkListResponse> call, Response<ArtworkListResponse> response) {

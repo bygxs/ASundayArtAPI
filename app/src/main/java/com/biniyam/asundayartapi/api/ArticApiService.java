@@ -10,14 +10,29 @@ import retrofit2.http.Query;
 
 public interface ArticApiService {
 
+    // Fetch all artworks
+    @GET("api/v1/artworks")
+    Call<ArtworkListResponse> getArtworkList(
+            @Query("limit") int limit
+    );
 
+    // Search artworks by query
+    @GET("api/v1/artworks/search")
+    Call<ArtworkListResponse> searchArtworks(
+            @Query("q") String query,
+            @Query("fields") String fields
+    );
+}
+
+
+/*
     // Get artwork list
     @GET("api/v1/artworks")
     Call<ArtworkListResponse> getArtworkList(
             @Query("limit") int limit,
-            @Query("page") int page,
-            @Query("fields") String fields,
-            @Query("include") String include
+            @Query("page") int page
+          //  @Query("fields") String fields
+           // @Query("include") String include
     );
 
     // Search artworks
@@ -26,9 +41,9 @@ public interface ArticApiService {
             @Query("q") String query,
             @Query("sort") String sort,
             @Query("from") String from,
-            @Query("size") int size,
-            @Query("limit") int limit,
-            @Query("facets") String facets
+           // @Query("size") int size,
+            @Query("limit") int limit
+           // @Query("facets") String facets
     );
 }
 
