@@ -1,81 +1,138 @@
 package com.biniyam.asundayartapi;
 
-import static android.content.ContentValues.TAG;
-
 import android.os.Bundle;
-import android.util.Log;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
-import com.bumptech.glide.request.RequestOptions;
+import com.biniyam.asundayartapi.adapter.ArtworkAdapter;
+import com.biniyam.asundayartapi.api.ArticApiService;
+import com.biniyam.asundayartapi.api.RetrofitClient;
+import com.biniyam.asundayartapi.response.ArtworkData;
+import com.biniyam.asundayartapi.response.ArtworkListResponse;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String BASE_URL = "https://api.artic.edu/";
+    private RecyclerView recyclerView;
+    private ArtworkAdapter artworkAdapter;
+    private List<ArtworkData> artworkList;
 
-    private ImageView imageView;
+
+    private EditText searchEditText;
+    private ImageView searchButton;
+
+    private ArticApiService apiService;
+    private String currentQuery = ""; // Stores the current search query
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        imageView = findViewById(R.id.imageView);
+        searchEditText = findViewById(R.id.searchEditText);
+        searchButton = findViewById(R.id.searchButton);
+        recyclerView = findViewById(R.id.recyclerView);
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
+        artworkList = new ArrayList<>();
+        artworkAdapter = new ArtworkAdapter(artworkList, this);
+        recyclerView.setAdapter(artworkAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        ArticApiService apiService = retrofit.create(ArticApiService.class);
+        // Initialize the API service
+        apiService = RetrofitClient.getClient(BASE_URL).create(ArticApiService.class);
 
-        // Make the API call
-        Call<ArtworkResponse> call = apiService.getArtwork(27992, "id,title,image_id");
-        call.enqueue(new Callback<ArtworkResponse>() {
+        // Fetch and display random artworks on app start
+        fetchArtworkList(99);
+
+
+        // Set click listener on the search button
+        searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onResponse(Call<ArtworkResponse> call, Response<ArtworkResponse> response) {
+            public void onClick(View view) {
+                String query = searchEditText.getText().toString().trim();
+                performSearch(query);
+            }
+        });
+
+    }
+
+    private void fetchArtworkList(int limit) {
+        Call<ArtworkListResponse> call = apiService.getArtworkList(limit);
+        call.enqueue(new Callback<ArtworkListResponse>() {
+            @Override
+            public void onResponse(Call<ArtworkListResponse> call, Response<ArtworkListResponse> response) {
                 if (response.isSuccessful()) {
-                    ArtworkResponse artworkResponse = response.body();
-                    if (artworkResponse != null) {
-                        ArtworkData artworkData = artworkResponse.getData();
-                        ConfigData configData = artworkResponse.getConfig();
-
-                        String iiifUrl = configData.getIiifUrl();
-                        String imageId = artworkData.getImageId();
-
-                        String imageUrl = iiifUrl + "/" + imageId + "/full/843,/0/default.jpg";
-
-                        // Load the image into the ImageView using Glide
-                        Glide.with(MainActivity.this)
-                                .load(imageUrl)
-                                .apply(new RequestOptions().placeholder(R.drawable.ic_launcher_background))
-                                .transition(DrawableTransitionOptions.withCrossFade())
-                                .into(imageView);
-
-                        // Display the extracted values
-                        Log.d(TAG, "Image URL: " + imageUrl);
-                       // Log.d(TAG, "Title: " + title);
-                    }
+                    List<ArtworkData> artworks = response.body().getData();
+                    List<ArtworkData> randomArtworks = getRandomArtworks(artworks, limit);
+                    artworkList.clear();
+                    artworkList.addAll(randomArtworks);
+                    artworkAdapter.notifyDataSetChanged();
                 } else {
-                    // Handle API error
-                    Log.e(TAG, "Response failed with code: " + response.code());
+                    // Handle API call error
                 }
             }
 
             @Override
-            public void onFailure(Call<ArtworkResponse> call, Throwable t) {
-                // Handle network or other errors
-                Log.e(TAG, "API call failed: " + t.getMessage());
+            public void onFailure(Call<ArtworkListResponse> call, Throwable t) {
+                // Handle API call failure
             }
         });
     }
+
+    private List<ArtworkData> getRandomArtworks(List<ArtworkData> artworkList, int limit) {
+        List<ArtworkData> randomArtworks = new ArrayList<>(artworkList);
+        Collections.shuffle(randomArtworks);
+        if (randomArtworks.size() > limit) {
+            randomArtworks = randomArtworks.subList(0, limit);
+        }
+        return randomArtworks;
+    }
+
+    private void performSearch(String query) {
+        currentQuery = query;
+        Call<ArtworkListResponse> call = apiService.searchArtworks(query, null);
+        call.enqueue(new Callback<ArtworkListResponse>() {
+            @Override
+            public void onResponse(Call<ArtworkListResponse> call, Response<ArtworkListResponse> response) {
+                if (response.isSuccessful()) {
+                    List<ArtworkData> searchResults = response.body().getData();
+                    artworkList.clear();
+                    artworkList.addAll(searchResults);
+                    artworkAdapter.notifyDataSetChanged();
+                } else {
+                    // Handle API call error
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ArtworkListResponse> call, Throwable t) {
+                // Handle API call failure
+            }
+        });
+    }
+
 }
+
+ /*
+    // tiny search form the  limited response body
+    private void performSearch(String query) {
+        currentQuery = query;
+        fetchArtworkList(99);
+    }
+
+  */
+
+
