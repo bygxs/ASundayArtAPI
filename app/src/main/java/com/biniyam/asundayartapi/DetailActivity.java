@@ -20,8 +20,6 @@ public class DetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detail);
 
 
-
-
         imageView = findViewById(R.id.imageView);
         titleTextView = findViewById(R.id.titleTextView);
 
